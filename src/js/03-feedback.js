@@ -1,38 +1,70 @@
 import throttle from 'lodash/throttle';
 
+const KEY_LOCAL_STORAGE = 'feedback-form-state';
 const form = document.querySelector('form.feedback-form');
-const KEY_LOCAL_STORAGE = "feedback-form-state";
-console.log(form);
+const EmailInputDefault = document.querySelector('input[type="email"]');
+const MessageInputDeafult = document.querySelector('textarea[name="message"]');
+let emailStorage;
+let messageStorage;
 
-// const setLocalStorage = (key, value) => {
-//     try {
-//       const valueToSave = JSON.stringify(value);
-//       localStorage.setItem(key, valueToSave);
-//     } catch (error) {
-//       console.error('Set state error:', error.message);
-//     }
-//   };
-  
-//   const getLocalStorage = key => {
-//     try {
-//       const valueSaved = localStorage.getItem(key);
-//       return valueSaved === null ? undefined : JSON.parse(valueSaved);
-//     } catch (error) {
-//       console.error('Get state error', error.message);
-//     }
-//   };
-  
- function valueHandler (event){
-    event.preventDefault();
-    const {
-        elements: {email, message}
-        } = event.currentTarget;
-    console.log(email.value, message.value)
-    
-    event.currentTarget.reset()
- }
+const setLocalStorage = (key, value) => {
+  try {
+    const valueToSave = JSON.stringify(value);
+    localStorage.setItem(key, valueToSave);
+  } catch (error) {
+    console.error('Set state error:', error.message);
+  }
+};
 
-form.addEventListener('submit', valueHandler)
+const getLocalStorage = key => {
+  try {
+    const valueSaved = localStorage.getItem(key);
+    return valueSaved === null ? undefined : JSON.parse(valueSaved);
+  } catch (error) {
+    console.error('Get state error', error.message);
+  }
+};
+if (getLocalStorage(KEY_LOCAL_STORAGE) !== undefined) {
+  emailStorage = getLocalStorage(KEY_LOCAL_STORAGE).email;
+  messageStorage = getLocalStorage(KEY_LOCAL_STORAGE).message;
+
+  if (!!emailStorage) {
+    EmailInputDefault.value = emailStorage;
+  }
+  if (!!messageStorage) {
+    MessageInputDeafult.value = messageStorage;
+  }
+}
+
+function valueHandler(event) {
+  const {
+    elements: { email, message },
+  } = event.currentTarget;
+
+  const dataToSave = {
+    email: email.value,
+    message: message.value,
+  };
+
+  setLocalStorage(KEY_LOCAL_STORAGE, dataToSave);
+  emailStorage = dataToSave.email;
+  messageStorage = dataToSave.message;
+}
+
+function formSubmit(event) {
+  event.preventDefault();
+  event.currentTarget.reset();
+  //localStorage.removeItem(KEY_LOCAL_STORAGE);
+  console.log(
+    `to jest mail: ${emailStorage}, \nto jest wiadomość: ${messageStorage}, \nobiekt: ${localStorage.getItem(
+      KEY_LOCAL_STORAGE
+    )} `
+  );
+  localStorage.clear();
+}
+
+form.addEventListener('input', throttle(valueHandler,500));
+form.addEventListener('submit', formSubmit);
 
 /*
 W HTML znajduje się znacznik formularza. Napisz skrypt, który będzie zapisywał wartości pól w local storage, gdy użytkownik coś wpisuje.

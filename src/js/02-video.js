@@ -4,9 +4,8 @@ import throttle from 'lodash/throttle';
 const iframe = document.querySelector('iframe');
 const  KEY_FOR_LOCAL_STORAGE ='videoplayer-current-time'
 const player = new Player(iframe);
-const startTime = load(KEY_FOR_LOCAL_STORAGE);
 
-const save = (key, value) => {
+const setStorage = (key, value) => {
   try {
     const valueToSave = JSON.stringify(value);
     localStorage.setItem(key, valueToSave);
@@ -15,7 +14,7 @@ const save = (key, value) => {
   }
 };
 
-const load = key => {
+const getStorage = key => {
   try {
     const valueSaved = localStorage.getItem(key);
     return valueSaved === null ? undefined : JSON.parse(valueSaved);
@@ -25,21 +24,20 @@ const load = key => {
 };
 
 export default {
-  save,
-  load,
+  setStorage,
+  getStorage,
 };
 
+const startTime = getStorage(KEY_FOR_LOCAL_STORAGE);
 const onPlay = function (data) {
   console.log(data.seconds);
-  save('videoplayer-current-time', data.seconds);
+  setStorage('videoplayer-current-time', data.seconds);
 };
 
 
 player
   .setCurrentTime(startTime)
-  .then(function (seconds) {
-    // seconds = the actual time that the player seeked to
-  })
+  .then(function (seconds) {})
   .catch(function (error) {
     switch (error.name) {
       case 'RangeError':
@@ -47,7 +45,7 @@ player
         break;
 
       default:
-        // some other error occurred
+
         break;
     }
   });
