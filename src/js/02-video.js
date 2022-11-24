@@ -30,7 +30,7 @@ export default {
 
 const startTime = getStorage(KEY_FOR_LOCAL_STORAGE);
 const onPlay = function (data) {
-  console.log(data.seconds);
+  // console.log(data.seconds);
   setStorage('videoplayer-current-time', data.seconds);
 };
 

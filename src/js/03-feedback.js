@@ -7,23 +7,23 @@ const MessageInputDeafult = document.querySelector('textarea[name="message"]');
 let emailStorage;
 let messageStorage;
 
-const setLocalStorage = (key, value) => {
+function setLocalStorage(value) {
   try {
     const valueToSave = JSON.stringify(value);
-    localStorage.setItem(key, valueToSave);
+    localStorage.setItem(KEY_LOCAL_STORAGE, valueToSave);
   } catch (error) {
     console.error('Set state error:', error.message);
   }
-};
+}
 
-const getLocalStorage = key => {
+function getLocalStorage(key) {
   try {
     const valueSaved = localStorage.getItem(key);
     return valueSaved === null ? undefined : JSON.parse(valueSaved);
   } catch (error) {
     console.error('Get state error', error.message);
   }
-};
+}
 if (getLocalStorage(KEY_LOCAL_STORAGE) !== undefined) {
   emailStorage = getLocalStorage(KEY_LOCAL_STORAGE).email;
   messageStorage = getLocalStorage(KEY_LOCAL_STORAGE).message;
@@ -35,18 +35,19 @@ if (getLocalStorage(KEY_LOCAL_STORAGE) !== undefined) {
     MessageInputDeafult.value = messageStorage;
   }
 }
-
 function valueHandler(event) {
   const {
-    elements: { email, message },
+    elements: { email = '', message = '' },
   } = event.currentTarget;
+
+  console.log(event.currentTarget);
 
   const dataToSave = {
     email: email.value,
     message: message.value,
   };
 
-  setLocalStorage(KEY_LOCAL_STORAGE, dataToSave);
+  setLocalStorage(dataToSave);
   emailStorage = dataToSave.email;
   messageStorage = dataToSave.message;
 }
@@ -63,7 +64,7 @@ function formSubmit(event) {
   localStorage.clear();
 }
 
-form.addEventListener('input', throttle(valueHandler,500));
+form.addEventListener('input', throttle(valueHandler, 500));
 form.addEventListener('submit', formSubmit);
 
 /*
