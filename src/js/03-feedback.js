@@ -35,16 +35,11 @@ if (getLocalStorage(KEY_LOCAL_STORAGE) !== undefined) {
     MessageInputDeafult.value = messageStorage;
   }
 }
-function valueHandler(event) {
-  const {
-    elements: { email = '', message = '' },
-  } = event.currentTarget;
-
-  console.log(event.currentTarget);
+function valueHandler() {
 
   const dataToSave = {
-    email: email.value,
-    message: message.value,
+    email: EmailInputDefault.value,
+    message: MessageInputDeafult.value,
   };
 
   setLocalStorage(dataToSave);
